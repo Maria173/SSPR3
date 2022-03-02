@@ -10,8 +10,8 @@ import ru.ulstu.is.sbapp.operation.domain.Operation;
 import ru.ulstu.is.sbapp.operation.domain.OperationKoren;
 
 @Configuration
-public class SpeakerConfiguration {
-    private final Logger log = LoggerFactory.getLogger(SpeakerConfiguration.class);
+public class OperationConfiguration {
+    private final Logger log = LoggerFactory.getLogger(OperationConfiguration.class);
 
     @Bean(value = "kvadrat", initMethod = "init", destroyMethod = "destroy")
     public OperationKvadrat createKvadratOperation() {
