@@ -2,116 +2,107 @@ package ru.ulstu.is.sbapp.university.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import ru.ulstu.is.sbapp.university.model.Teacher;
 import ru.ulstu.is.sbapp.university.model.Subject;
+import ru.ulstu.is.sbapp.university.repository.TeacherRepository;
+import ru.ulstu.is.sbapp.university.repository.SubjectRepository;
+import ru.ulstu.is.sbapp.util.validation.ValidatorUtil;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeacherService {
-    @PersistenceContext
-    private EntityManager em;
+    private final TeacherRepository teacherRepository;
+    private final SubjectRepository subjectRepository;
+    private final ValidatorUtil validatorUtil;
+
+    public TeacherService(TeacherRepository teacherRepository,
+            SubjectRepository subjectRepository,
+            ValidatorUtil validatorUtil) {
+        this.teacherRepository = teacherRepository;
+        this.subjectRepository = subjectRepository;
+        this.validatorUtil = validatorUtil;
+    }
 
     @Transactional
     public Teacher addTeacher(String firstName, String lastName, int experience) {
-        if (!StringUtils.hasText(firstName) || !StringUtils.hasText(lastName)
-                || !StringUtils.hasText(Integer.toString(experience))) {
-            throw new IllegalArgumentException("Teacher name is null or empty");
-        }
         final Teacher teacher = new Teacher(firstName, lastName, experience);
-        em.persist(teacher);
-        return teacher;
+        validatorUtil.validate(teacher);
+        return teacherRepository.save(teacher);
     }
 
     @Transactional(readOnly = true)
     public Teacher findTeacher(Long id) {
-        final Teacher teacher = em.find(Teacher.class, id);
-        if (teacher == null) {
-            throw new EntityNotFoundException(String.format("Teacher with id [%s] is not found", id));
-        }
-        return teacher;
+        final Optional<Teacher> teacher = teacherRepository.findById(id);
+        return teacher.orElseThrow(() -> new TeacherNotFoundException(id));
     }
 
     @Transactional(readOnly = true)
     public List<Teacher> findAllTeachers() {
-        return em.createQuery("select s from Teacher s", Teacher.class).getResultList();
+        return teacherRepository.findAll();
     }
 
     @Transactional
     public Teacher updateTeacher(Long id, String firstName, String lastName, int experience) {
-        if (!StringUtils.hasText(firstName) || !StringUtils.hasText(lastName)
-                || !StringUtils.hasText(Integer.toString(experience))) {
-            throw new IllegalArgumentException("Teacher name is null or empty");
-        }
         final Teacher currentTeacher = findTeacher(id);
         currentTeacher.setFirstName(firstName);
         currentTeacher.setLastName(lastName);
         currentTeacher.setExperience(experience);
-        return em.merge(currentTeacher);
+        validatorUtil.validate(currentTeacher);
+        return teacherRepository.save(currentTeacher);
     }
 
     @Transactional
     public Teacher deleteTeacher(Long id) {
         final Teacher currentTeacher = findTeacher(id);
-        em.remove(currentTeacher);
+        teacherRepository.delete(currentTeacher);
         return currentTeacher;
     }
 
     @Transactional
     public void deleteAllTeachers() {
-        em.createQuery("delete from Teacher").executeUpdate();
+        teacherRepository.deleteAll();
     }
 
     @Transactional
     public Subject addSubject(String name, int hours, Long teacher) {
-        if (!StringUtils.hasText(name) || !StringUtils.hasText(Integer.toString(hours))) {
-            throw new IllegalArgumentException("Subject name is null or empty");
-        }
         final Subject subject = new Subject(name, hours, teacher);
-        em.persist(subject);
-        return subject;
+        validatorUtil.validate(subject);
+        return subjectRepository.save(subject);
     }
 
     @Transactional(readOnly = true)
     public Subject findSubject(Long id) {
-        final Subject subject = em.find(Subject.class, id);
-        if (subject == null) {
-            throw new EntityNotFoundException(String.format("Subject with id [%s] is not found", id));
-        }
-        return subject;
+        final Optional<Subject> subject = subjectRepository.findById(id);
+        return subject.orElseThrow(() -> new SubjectNotFoundException(id));
     }
 
     @Transactional(readOnly = true)
     public List<Subject> findAllSubjects() {
-        return em.createQuery("select s from Subject s", Subject.class).getResultList();
+        return subjectRepository.findAll();
     }
 
     @Transactional
     public Subject updateSubject(Long id, String name, int hours, Long teacher) {
-        if (!StringUtils.hasText(name) || !StringUtils.hasText(Integer.toString(hours))) {
-            throw new IllegalArgumentException("Subject name is null or empty");
-        }
         final Subject currentSubject = findSubject(id);
         currentSubject.setName(name);
         currentSubject.setHours(hours);
         currentSubject.setTeacher(teacher);
-        return em.merge(currentSubject);
+        validatorUtil.validate(currentSubject);
+        return subjectRepository.save(currentSubject);
     }
 
     @Transactional
     public Subject deleteSubject(Long id) {
         final Subject currentSubject = findSubject(id);
-        em.remove(currentSubject);
+        subjectRepository.delete(currentSubject);
         return currentSubject;
     }
 
     @Transactional
     public void deleteAllSubjects() {
-        em.createQuery("delete from Subject").executeUpdate();
+        subjectRepository.deleteAll();
     }
 }

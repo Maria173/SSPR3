@@ -23,9 +23,4 @@ class SbappApplicationTests {
 		final String res = operationService.count(9, "koren");
 		Assertions.assertEquals("Корень: 3.0", res);
 	}
-
-	@Test
-	void testSpeakerErrorWired() {
-		Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> operationService.count(4, "kvadrat"));
-	}
 }

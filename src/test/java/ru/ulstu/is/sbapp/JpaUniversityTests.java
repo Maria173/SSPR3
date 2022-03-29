@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ru.ulstu.is.sbapp.university.model.Teacher;
+import ru.ulstu.is.sbapp.university.service.TeacherNotFoundException;
 import ru.ulstu.is.sbapp.university.service.TeacherService;
 import ru.ulstu.is.sbapp.university.model.Subject;
+import ru.ulstu.is.sbapp.university.service.SubjectNotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @SpringBootTest
@@ -44,7 +45,7 @@ public class JpaUniversityTests {
     @Test
     void testTeacherReadNotFound() {
         teacherService.deleteAllTeachers();
-        Assertions.assertThrows(EntityNotFoundException.class, () -> teacherService.findTeacher(-1L));
+        Assertions.assertThrows(TeacherNotFoundException.class, () -> teacherService.findTeacher(-1L));
 
     }
 
@@ -96,7 +97,7 @@ public class JpaUniversityTests {
     void testSubjectReadNotFound() {
         teacherService.deleteAllSubjects();
         teacherService.deleteAllTeachers();
-        Assertions.assertThrows(EntityNotFoundException.class, () -> teacherService.findSubject(-1L));
+        Assertions.assertThrows(SubjectNotFoundException.class, () -> teacherService.findSubject(-1L));
 
     }
 
