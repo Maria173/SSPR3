@@ -1,7 +1,7 @@
 package ru.ulstu.is.sbapp.university.model;
 
 import javax.persistence.*;
-
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,21 +10,23 @@ public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column()
+
+    @NotBlank(message = "First ame can't be null or empty")
     private String firstName;
+
+    @NotBlank(message = "Last name can't be null or empty")
     private String lastName;
-    private int experience;
+
     @ManyToMany
-    private List<Teacher> subject;
+    @JoinTable(name = "teachers_subjects", joinColumns = @JoinColumn(name = "teacher_fk"), inverseJoinColumns = @JoinColumn(name = "subjectы_fk"))
+    private List<Teacher> subjects;
 
     public Teacher() {
-
     }
 
-    public Teacher(String firstName, String lastName, int experience) {
+    public Teacher(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.experience = experience;
     }
 
     public Long getId() {
@@ -45,14 +47,6 @@ public class Teacher {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    public void setExperience(int experience) {
-        this.experience = experience;
     }
 
     @Override
@@ -76,7 +70,6 @@ public class Teacher {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", experience='" + experience + '\'' +
                 '}';
     }
 }

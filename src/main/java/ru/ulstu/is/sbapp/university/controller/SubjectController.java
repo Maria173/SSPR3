@@ -2,54 +2,52 @@ package ru.ulstu.is.sbapp.university.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ulstu.is.sbapp.university.service.TeacherService;
+import ru.ulstu.is.sbapp.university.service.SubjectService;
+import org.springframework.web.bind.annotation.RequestBody;
+import ru.ulstu.is.sbapp.WebConfiguration;
+import javax.validation.Valid;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/subject")
+@RequestMapping(WebConfiguration.REST_API + "/subjects")
 public class SubjectController {
-    private final TeacherService teacherService;
+    private final SubjectService subjectService;
 
-    public SubjectController(TeacherService teacherService) {
-        this.teacherService = teacherService;
+    public SubjectController(SubjectService subjectService) {
+        this.subjectService = subjectService;
     }
 
     @GetMapping("/{id}")
     public SubjectDto getSubject(@PathVariable Long id) {
-        return new SubjectDto(teacherService.findSubject(id));
+        return new SubjectDto(subjectService.findSubject(id));
     }
 
     @GetMapping("/")
     public List<SubjectDto> getSubjects() {
-        return teacherService.findAllSubjects().stream()
+        return subjectService.findAllSubjects().stream()
                 .map(SubjectDto::new)
                 .toList();
     }
 
-    @PostMapping("/")
-    public SubjectDto createSubject(@RequestParam("name") String name,
-            @RequestParam("hours") int hours,
-            @RequestParam("teacherId") Long teacherId) {
-        return new SubjectDto(teacherService.addSubject(name, hours, teacherId));
+    @PostMapping
+    public SubjectDto createSubject(@RequestBody @Valid SubjectDto subjectDto) {
+        return new SubjectDto(subjectService.addSubject(subjectDto.getName(), subjectDto.getHours()));
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public SubjectDto updateSubject(@PathVariable Long id,
-            @RequestParam("name") String name,
-            @RequestParam("hours") int hours,
-            @RequestParam("teacherId") Long teacherId) {
-        return new SubjectDto(teacherService.updateSubject(id, name, hours, teacherId));
+            @RequestBody @Valid SubjectDto subjectDto) {
+        return new SubjectDto(subjectService.updateSubject(id, subjectDto.getName(), subjectDto.getHours()));
     }
 
     @DeleteMapping("/{id}")
-    public SubjectDto deleteSubject(@PathVariable Long id) {
-        return new SubjectDto(teacherService.deleteSubject(id));
+    public SubjectDto deleteExpenses(@PathVariable Long id) {
+        return new SubjectDto(subjectService.deleteSubject(id));
     }
 }

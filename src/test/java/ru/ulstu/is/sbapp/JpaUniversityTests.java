@@ -12,6 +12,7 @@ import ru.ulstu.is.sbapp.university.service.TeacherNotFoundException;
 import ru.ulstu.is.sbapp.university.service.TeacherService;
 import ru.ulstu.is.sbapp.university.model.Subject;
 import ru.ulstu.is.sbapp.university.service.SubjectNotFoundException;
+import ru.ulstu.is.sbapp.university.service.SubjectService;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class JpaUniversityTests {
     @Test
     void testTeacherCreate() {
         teacherService.deleteAllTeachers();
-        final Teacher teacher = teacherService.addTeacher("Иван", "Александров", 3);
+        final Teacher teacher = teacherService.addTeacher("Иван", "Александров");
         log.info(teacher.toString());
         Assertions.assertNotNull(teacher.getId());
 
@@ -34,7 +35,7 @@ public class JpaUniversityTests {
     @Test
     void testTeacherRead() {
         teacherService.deleteAllTeachers();
-        final Teacher teacher = teacherService.addTeacher("Иван", "Александров", 3);
+        final Teacher teacher = teacherService.addTeacher("Иван", "Александров");
         log.info(teacher.toString());
         final Teacher findTeacher = teacherService.findTeacher(teacher.getId());
         log.info(findTeacher.toString());
@@ -52,8 +53,8 @@ public class JpaUniversityTests {
     @Test
     void testTeacherReadAll() {
         teacherService.deleteAllTeachers();
-        teacherService.addTeacher("Иван", "Александров", 3);
-        teacherService.addTeacher("Петр", "Петров", 10);
+        teacherService.addTeacher("Иван", "Александров");
+        teacherService.addTeacher("Петр", "Петров");
         final List<Teacher> teachers = teacherService.findAllTeachers();
         log.info(teachers.toString());
         Assertions.assertEquals(teachers.size(), 2);
@@ -69,56 +70,48 @@ public class JpaUniversityTests {
 
     }
 
+    @Autowired
+    private SubjectService subjectService;
+
     @Test
     void testSubjectCreate() {
-        teacherService.deleteAllSubjects();
-        teacherService.deleteAllTeachers();
-        Long teacher = teacherService.addTeacher("Иван", "Александров", 3).getId();
-        final Subject subject = teacherService.addSubject("Технологии программирования", 40, teacher);
+        subjectService.deleteAllSubjects();
+        final Subject subject = subjectService.addSubject("Технологии программирования", 40);
         log.info(subject.toString());
         Assertions.assertNotNull(subject.getId());
-
     }
 
     @Test
     void testSubjectRead() {
-        teacherService.deleteAllSubjects();
-        teacherService.deleteAllTeachers();
-        Teacher teacher = teacherService.addTeacher("Иван", "Александров", 3);
-        final Subject subject = teacherService.addSubject("Технологии программирования", 40, teacher.getId());
+        subjectService.deleteAllSubjects();
+        final Subject subject = subjectService.addSubject("Технологии программирования", 40);
         log.info(subject.toString());
-        final Subject findSubject = teacherService.findSubject(subject.getId());
+        final Subject findSubject = subjectService.findSubject(subject.getId());
         log.info(findSubject.toString());
         Assertions.assertEquals(subject, findSubject);
-
     }
 
     @Test
     void testSubjectReadNotFound() {
-        teacherService.deleteAllSubjects();
-        teacherService.deleteAllTeachers();
-        Assertions.assertThrows(SubjectNotFoundException.class, () -> teacherService.findSubject(-1L));
+        subjectService.deleteAllSubjects();
+        Assertions.assertThrows(SubjectNotFoundException.class, () -> subjectService.findSubject(-1L));
 
     }
 
     @Test
     void testSubjectReadAll() {
-        teacherService.deleteAllSubjects();
-        teacherService.deleteAllTeachers();
-        Teacher teacher = teacherService.addTeacher("Иван", "Александров", 3);
-        teacherService.addSubject("Технологии программирования", 40, teacher.getId());
-        teacherService.addSubject("Философия", 25, teacher.getId());
-        final List<Subject> subjects = teacherService.findAllSubjects();
-        log.info(subjects.toString());
-        Assertions.assertEquals(subjects.size(), 2);
-
+        subjectService.deleteAllSubjects();
+        subjectService.addSubject("Технологии программирования", 40);
+        subjectService.addSubject("Философия", 25);
+        final List<Subject> subject = subjectService.findAllSubjects();
+        log.info(subject.toString());
+        Assertions.assertEquals(subject.size(), 2);
     }
 
     @Test
     void testSubjectReadAllEmpty() {
-        teacherService.deleteAllSubjects();
-        teacherService.deleteAllTeachers();
-        final List<Subject> subjects = teacherService.findAllSubjects();
+        subjectService.deleteAllSubjects();
+        final List<Subject> subjects = subjectService.findAllSubjects();
         log.info(subjects.toString());
         Assertions.assertEquals(subjects.size(), 0);
 

@@ -1,7 +1,7 @@
 package ru.ulstu.is.sbapp.university.model;
 
 import javax.persistence.*;
-
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,30 +10,21 @@ public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column()
+
+    @NotBlank(message = "Name can't be null or empty")
     String name;
+
     int hours;
-    Long teacher_id;
 
-    public Long getTeacher() {
-        return teacher_id;
-    }
-
-    public void setTeacher(Long teacher_id) {
-        this.teacher_id = teacher_id;
-    }
-
-    @ManyToMany
-    private List<Subject> teacher;
+    @ManyToMany(mappedBy = "subjects")
+    private List<Teacher> teacher;
 
     public Subject() {
-
     }
 
-    public Subject(String name, int hours, Long teacher_id) {
+    public Subject(String name, int hours) {
         this.name = name;
         this.hours = hours;
-        this.teacher_id = teacher_id;
     }
 
     public Long getId() {
@@ -81,7 +72,6 @@ public class Subject {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", hours='" + hours + '\'' +
-                ", teacher'" + teacher_id + '\'' +
                 '}';
     }
 }
