@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.ulstu.is.sbapp.university.service.SubjectService;
 import org.springframework.web.bind.annotation.RequestBody;
-import ru.ulstu.is.sbapp.WebConfiguration;
+import ru.ulstu.is.sbapp.configuration.WebConfiguration;
 import javax.validation.Valid;
 
 import java.util.List;
