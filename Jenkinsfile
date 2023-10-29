@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Cloning Git') {
             steps {
-                git([url: 'https://gitlab.com/Maria173/InterProg-PIbd21-Shestakova.git', branch: '6lab'])
+                git([url: 'https://github.com/Maria173/SSPR3.git', branch: '6lab'])
              }
         }
         stage('Build') {
